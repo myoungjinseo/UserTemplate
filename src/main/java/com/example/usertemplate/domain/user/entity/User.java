@@ -22,8 +22,6 @@ public class User implements UserDetails{
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
-    private String username;
     @Column(nullable = false)
     private String password;
     @ElementCollection(fetch = FetchType.EAGER)
@@ -37,7 +35,7 @@ public class User implements UserDetails{
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override
@@ -65,4 +63,7 @@ public class User implements UserDetails{
         return true;
     }
 
+    public void addRole(Role ... roles) {
+        this.roles.addAll(Arrays.asList(roles));
+    }
 }
