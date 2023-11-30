@@ -1,13 +1,8 @@
 package com.example.usertemplate.global.jwt;
 
-import com.example.usertemplate.api.user.service.UserDetailService;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,19 +13,18 @@ import io.jsonwebtoken.security.Keys;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class TokenProvider {
-
+public class TokenProvider implements InitializingBean {
+    private final String secret;
     private SecretKey secretKey;
 
+    public TokenProvider(@Value("${jwt.secret}") String secret) {
+        this.secret = secret;
+    }
 
-    private final UserDetailService userDetailService;
 
-
-    @PostConstruct
-    protected void init(@Value("${jwt.secret}")
-                            String key) {
-        byte[] keyBytes = Decoders.BASE64.decode(key);
+    @Override
+    public void afterPropertiesSet() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -49,11 +43,7 @@ public class TokenProvider {
 
 
 
-    public Authentication getAuthentication(String accessToken) {
-        UserDetails userDetails = userDetailService.loadUserByUsername(getUserEmail(accessToken));
-        return new UsernamePasswordAuthenticationToken(userDetails, "",
-                userDetails.getAuthorities());
-    }
+
 
     public String getUserEmail(String token){
         return Jwts.parserBuilder()
