@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @RedisHash(value = "refreshToken", timeToLive = 60 * 60 * 24 * 30)
@@ -14,6 +15,6 @@ public class RefreshToken {
     @Id
     private String refreshToken;
 
-    private Long userId;
+    private String email;
     private LocalDateTime validTime;
 }

@@ -17,8 +17,8 @@ public class RefreshTokenRepository{
     private final RedisTemplate redisTemplate;
 
     public void save(RefreshToken refreshToken){
-        ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(refreshToken.getRefreshToken(), refreshToken.getUserId());
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(refreshToken.getRefreshToken(), refreshToken.getEmail(),30,TimeUnit.DAYS);
         redisTemplate.expire(refreshToken.getRefreshToken(),30,TimeUnit.DAYS);
     }
 
