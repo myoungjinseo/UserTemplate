@@ -30,7 +30,9 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(x -> new SimpleGrantedAuthority(x.name())).collect(Collectors.toList());
+        return roles.stream()
+                .map(x -> new SimpleGrantedAuthority(x.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -63,7 +65,5 @@ public class User implements UserDetails{
         return true;
     }
 
-    public void addRole(Role ... roles) {
-        this.roles.addAll(Arrays.asList(roles));
-    }
+
 }

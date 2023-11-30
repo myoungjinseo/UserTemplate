@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -42,8 +43,9 @@ public class UserService {
         User user = User.builder()
                 .email(userRequest.getEmail())
                 .password(passwordEncoder.encode(userRequest.getPassword()))
+                .roles(Collections.singleton(Role.ROLE_USER))
                 .build();
-        user.addRole(Role.ROLE_USER);
+
 
         userRepository.save(user);
         return AccountResponse.of(user);
@@ -61,7 +63,7 @@ public class UserService {
         String atk = tokenProvider.createToken(userRequest.getEmail(), atkTime);
         String rtk = tokenProvider.createToken(userRequest.getEmail(), rtkTime);
 
-        RefreshToken refreshToken = new RefreshToken(rtk, user.getId(), LocalDateTime.now().plusSeconds(rtkTime / 1000));
+        RefreshToken refreshToken = new RefreshToken(rtk, user.getEmail(), LocalDateTime.now().plusSeconds(rtkTime / 1000));
         refreshTokenRepository.save(refreshToken);
         return new TokenResponse(atk, rtk);
 
